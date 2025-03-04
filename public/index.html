@@ -36,6 +36,7 @@
 	}
 	#chatbox{
 		height: 500px;
+		overflow-y: auto;
 	}
 	#messagebox{
 		height: 200px;
@@ -50,6 +51,18 @@
 	#model-list-container button:hover{
 		background-color: #329dc8;
 	}
+	#chatbox .message{
+		padding: .1em;
+	}
+	#chatbox div.user{
+		color: #222;
+		background-color: #c2b28b;
+		border-radius: .2em;
+		display: inline-block;
+	}
+	#chatbox .ollama .content {
+	    white-space: pre-line;
+	}
 </style>
 
 <body>
@@ -61,7 +74,22 @@
 			</div>
 		</div>
 		<div id="right-side" class="vstack">
-			<div id="chatbox" class="ol"></div>
+			<div id="chatbox" class="ol">
+				<div class="message user">You: who are you</div>
+				<div class="message ollama"><div class="content">&lt;think&gt;
+Alright, the user asked, "who are you." Let me figure out what they need.
+
+They might be curious about my identity since it's a common question. I should explain that I'm an AI developed by DeepSeek.
+
+I'll mention that I aim to help with answering questions and providing information. It's important to highlight what I can do, like offering explanations or recommendations.
+
+But I also need to clarify my limitations—no personal experiences, emotions, or real-world consciousness.
+
+Keeping it friendly and open-ended will encourage them to ask more.
+&lt;/think&gt;
+
+I'm DeepSeek-R1-Lite-Preview, an AI assistant created by the Chinese company DeepSeek. My purpose is to help you with answering questions, providing information, offering suggestions, or sharing interesting content. I'll do my best to assist you in various ways! If you have any questions or need advice, feel free to ask me anytime. 😊</div><div class="stats">Rate: 25.1 tok/s</div></div>
+			</div>
 			<div id="messagebox" contenteditable="true"></div>
 		</div>
 	</div>
