@@ -2,97 +2,36 @@
 <html>
 
 <head>
-	<title>Ollama Chat</title>
-	<link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
-	<link rel="stylesheet" href="css/styles.css">
-	<script type="module" src="js/util/leeo.js" defer></script>
-	<script type="module" src="js/model/index.js"></script>
-	</head>
-	<style>
-	#main{
-		width: 100%;
-		display: flex;
-		gap: 1em;
-		padding: 1em;
-	}
-	#left-side {
-		width: 300px;
-		flex-shrink: 0;
-	}
-	#right-side {
-		flex-grow: 1;
-		max-width: 900px;
-	}
-	#right-side > div {
-		margin-bottom: 0.6em;
-	}
-	#chatbox, #messagebox {
-		width: 100%;
-		margin: 0;
-		box-sizing: border-box;
-		padding: 1em;
-		background-color: rgb(34, 34, 34);
-		border-radius: .5em;
-	}
-	#chatbox{
-		height: 500px;
-		overflow-y: auto;
-	}
-	#messagebox{
-		height: 200px;
-	}
-	#model-list-container button{
-		width: 300px;
-		background-color: #1c7da3;
-		color: #fff;
-		border: 0;
-		margin-bottom: 1px;
-	}
-	#model-list-container button:hover{
-		background-color: #329dc8;
-	}
-	#chatbox .message{
-		padding: .1em;
-	}
-	#chatbox div.user{
-		color: #222;
-		background-color: #c2b28b;
-		border-radius: .2em;
-		display: inline-block;
-	}
-	#chatbox .ollama .content {
-	    white-space: pre-line;
-	}
-	#model-status {
-	    margin-top: 10px;
-	    padding: 8px;
-	    background-color: #507f70;
-	    color: #eee;
-	    border-radius: 4px;
-	    text-align: center;
-	}
-
-	#model-status.error {
-	    background-color: #700;
-	    color: #fff;
-	}
-</style>
+    <title>Ollama Chat</title>
+    <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
+    <link rel="stylesheet" href="css/styles.css">
+    <script type="module" src="js/util/leeo.js" defer></script>
+    <script type="module" src="js/model/index.js"></script>
+</head>
 
 <body>
-	<h1>Ollama Chat</h1>
-	<div class="hstack" id="main">
-		<div id="left-side">
-			<div id="model-list-container">
-				<button>ollama</button>
-			</div>
-			<div id="model-status"></div>
-		</div>
-		<div id="right-side" class="vstack">
-			<div id="chatbox" class="ol">
-			</div>
-			<div id="messagebox" contenteditable="true"></div>
-		</div>
-	</div>
+    <h1>Ollama Chat</h1>
+    <div class="hstack" id="main">
+        <div id="left-side">
+            <h3>Models</h3>
+            <div id="model-list-container">
+                <div class="model-wrapper">
+                    <button>Loading models...</button>
+                    <span class="status-indicator status-loading">wait</span>
+                </div>
+            </div>
+        </div>
+        <div id="right-side" class="vstack">
+            <div id="chatbox" class="ol">
+                <div class="message user">You: Hello there!</div>
+                <div class="message ollama">
+                    <div class="content">Hello! How can I assist you today? Feel free to ask any questions or let me know what you'd like to discuss.</div>
+                    <div class="stats">Welcome to Ollama Chat</div>
+                </div>
+            </div>
+            <div id="messagebox" contenteditable="true" placeholder="Type your message here..."></div>
+        </div>
+    </div>
 </body>
 
 </html>

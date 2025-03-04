@@ -1,6 +1,10 @@
 // api.js - Utility module for API communication
 import $ from "../util/leeo.js";
 
+// Track loaded model status
+let currentlyLoadedModel = null;
+let modelLoadStatus = {};
+
 // Get all available Ollama models
 async function getModels() {
     try {
@@ -16,16 +20,136 @@ async function getModels() {
         }
         
         const data = await response.json();
-        return data.models || [];
+        const models = data.models || [];
+        
+        // Initialize model status
+        models.forEach(model => {
+            if (!modelLoadStatus[model.name]) {
+                modelLoadStatus[model.name] = 'available';
+            }
+        });
+        
+        return models;
     } catch (error) {
         console.error("Failed to fetch models:", error);
         return [];
     }
 }
 
+// Check if model is loaded
+function isModelLoaded(modelName) {
+    return currentlyLoadedModel === modelName;
+}
+
+// Get model status
+function getModelStatus(modelName) {
+    return modelLoadStatus[modelName] || 'unknown';
+}
+
+// Close currently loaded model
+async function closeCurrentModel() {
+    if (!currentlyLoadedModel) return true;
+    
+    try {
+        const response = await fetch('/api/close', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                model: currentlyLoadedModel
+            })
+        });
+        
+        if (!response.ok) {
+            console.error(`Error closing model: ${response.statusText}`);
+            return false;
+        }
+        
+        // Update tracking variables
+        modelLoadStatus[currentlyLoadedModel] = 'available';
+        currentlyLoadedModel = null;
+        return true;
+    } catch (error) {
+        console.error('Error closing model:', error);
+        return false;
+    }
+}
+
+// Preload a model
+async function preloadModel(modelName) {
+    if (currentlyLoadedModel === modelName) {
+        return true; // Already loaded
+    }
+    
+    try {
+        // Close current model if one is loaded
+        if (currentlyLoadedModel) {
+            await closeCurrentModel();
+        }
+        
+        modelLoadStatus[modelName] = 'loading';
+        
+        // Send a minimal prompt to initialize the model
+        const response = await fetch('/api/chat', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                model: modelName,
+                messages: [{ role: 'user', content: 'Initialize' }]
+            })
+        });
+
+        if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+        
+        // Process the response to ensure model is loaded
+        const reader = response.body.getReader();
+        await processModelInitResponse(reader);
+        
+        // Update model status
+        currentlyLoadedModel = modelName;
+        modelLoadStatus[modelName] = 'loaded';
+        return true;
+    } catch (error) {
+        console.error(`Failed to preload model ${modelName}:`, error);
+        modelLoadStatus[modelName] = 'error';
+        return false;
+    }
+}
+
+// Process initialization response
+async function processModelInitResponse(reader) {
+    const decoder = new TextDecoder();
+    
+    try {
+        while (true) {
+            const { done, value } = await reader.read();
+            if (done) break;
+            
+            // Just consume the response to complete initialization
+            decoder.decode(value);
+        }
+    } catch (error) {
+        console.error('Model initialization error:', error);
+        throw error;
+    }
+}
+
 // Send message to the API
 async function sendMessage(model, messages) {
     try {
+        // Close current model if different
+        if (currentlyLoadedModel && currentlyLoadedModel !== model) {
+            await closeCurrentModel();
+        }
+        
+        // Update status to loading if not already loaded
+        if (!isModelLoaded(model)) {
+            modelLoadStatus[model] = 'loading';
+        }
+        
         const response = await fetch('/api/chat', {
             method: 'POST',
             headers: {
@@ -39,9 +163,14 @@ async function sendMessage(model, messages) {
 
         if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
         
+        // Update model status after successful request
+        currentlyLoadedModel = model;
+        modelLoadStatus[model] = 'loaded';
+        
         return response.body.getReader();
     } catch (error) {
         console.error('Request failed:', error);
+        modelLoadStatus[model] = 'error';
         throw error;
     }
 }
@@ -105,4 +234,12 @@ async function receiveMessage(reader, onChunk, onComplete, onError) {
     return fullResponse;
 }
 
-export { getModels, sendMessage, receiveMessage };
+export { 
+    getModels, 
+    sendMessage, 
+    receiveMessage, 
+    preloadModel,
+    closeCurrentModel,
+    isModelLoaded,
+    getModelStatus
+};

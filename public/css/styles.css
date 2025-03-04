@@ -51,7 +51,113 @@ div::-webkit-scrollbar {
     align-items: stretch; /* 子元素沿交叉轴拉伸以适应容器 */
 }
 
-/* 附加本项目的css */
+/* Model status button styling */
+.model-button {
+    width: 100%;
+    text-align: left;
+    padding: 8px 10px;
+    color: #fff;
+    border: 0;
+    margin-bottom: 1px;
+    transition: background-color 0.3s;
+}
+
 .model-selected {
-    background-color: #419730 !important;
+    font-weight: bold;
+}
+
+/* Status colors */
+.status-available {
+    background-color: #1c7da3;
+}
+
+.status-available:hover {
+    background-color: #329dc8;
+}
+
+.status-loading {
+    background-color: #c97c00;
+    animation: pulse 1.5s infinite;
+}
+
+.status-loaded {
+    background-color: #419730;
+}
+
+.status-error {
+    background-color: #973030;
+}
+
+@keyframes pulse {
+    0% { opacity: 0.6; }
+    50% { opacity: 1; }
+    100% { opacity: 0.6; }
+}
+
+/* Chat styling */
+#main {
+    width: 100%;
+    display: flex;
+    gap: 1em;
+    padding: 1em;
+}
+
+#left-side {
+    width: 300px;
+    flex-shrink: 0;
+}
+
+#right-side {
+    flex-grow: 1;
+    max-width: 900px;
+}
+
+#right-side > div {
+    margin-bottom: 0.6em;
+}
+
+#chatbox, #messagebox {
+    width: 100%;
+    margin: 0;
+    box-sizing: border-box;
+    padding: 1em;
+    background-color: rgb(34, 34, 34);
+    border-radius: .5em;
+}
+
+#chatbox {
+    height: 500px;
+    overflow-y: auto;
+}
+
+#messagebox {
+    height: 200px;
+}
+
+#chatbox .message {
+    padding: .5em;
+    margin-bottom: .5em;
+}
+
+#chatbox div.user {
+    color: #222;
+    background-color: #c2b28b;
+    border-radius: .2em;
+    display: inline-block;
+    max-width: 90%;
+}
+
+#chatbox .ollama {
+    color: #ccc;
+}
+
+#chatbox .ollama .content {
+    white-space: pre-line;
+    margin-bottom: 0.5em;
+}
+
+#chatbox .ollama .stats {
+    font-size: 8pt;
+    color: #666;
+    text-align: right;
 }
