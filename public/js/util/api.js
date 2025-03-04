@@ -1,6 +1,3 @@
-// api.js - Utility module for API communication
-import $ from "../util/leeo.js";
-
 // Track loaded model status
 let currentlyLoadedModel = null;
 let modelLoadStatus = {};
