@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<title>Ollama Chat</title>
+	<link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
+	<link rel="stylesheet" href="css/styles.css">
+	<script type="module" src="js/util/leeo.js" defer></script>
+	<script type="module" src="js/model/index.js"></script>
+	</head>
+	<style>
+	#main{
+		width: 100%;
+		display: flex;
+		gap: 1em;
+		padding: 1em;
+	}
+	#left-side {
+		width: 300px;
+		flex-shrink: 0;
+	}
+	#right-side {
+		flex-grow: 1;
+		max-width: 900px;
+	}
+	#right-side > div {
+		margin-bottom: 0.6em;
+	}
+	#chatbox, #messagebox {
+		width: 100%;
+		margin: 0;
+		box-sizing: border-box;
+		padding: 1em;
+		background-color: rgb(34, 34, 34);
+		border-radius: .5em;
+	}
+	#chatbox{
+		height: 500px;
+	}
+	#messagebox{
+		height: 200px;
+	}
+	#model-list-container button{
+		width: 300px;
+		background-color: #1c7da3;
+		color: #fff;
+		border: 0;
+		margin-bottom: 1px;
+	}
+	#model-list-container button:hover{
+		background-color: #329dc8;
+	}
+</style>
+
+<body>
+	<h1>Ollama Chat</h1>
+	<div class="hstack" id="main">
+		<div id="left-side">
+			<div id="model-list-container">
+				<button>ollama</button>
+			</div>
+		</div>
+		<div id="right-side" class="vstack">
+			<div id="chatbox" class="ol"></div>
+			<div id="messagebox" contenteditable="true"></div>
+		</div>
+	</div>
+</body>
+
+</html>

@@ -1,0 +1,66 @@
+body {
+    font-size: 10pt;
+    padding: 0;
+    margin: 0;
+    height: 100%;
+    width: auto;
+}
+
+body,
+div,
+input,
+td,
+table,
+a {
+    font-size: 10pt;
+    font-family: "Helvetica Neue", Arial, Helvetica, sans-serif;
+    color: #999;
+}
+
+body {
+    /* background: #222; */
+    background-color: #333;
+    padding: .5em;
+}
+
+hr {
+    border: .1em solid #333;
+    width: 100%;
+    margin: .5em 0;
+}
+
+div[contenteditable="true"]:focus {
+    background: transparent;
+    color: inherit;
+    /* 或者设置为和 div 文本颜色相同的值 */
+    box-shadow: none;
+    outline: none;
+}
+
+div {
+    scrollbar-width: thin;
+}
+
+div::-webkit-scrollbar {
+    width: 1px;
+    /* Set desired width */
+}
+
+.hstack {
+    display: flex;
+    align-items: flex-start; /* 修改为顶部对齐 */
+    flex-wrap: wrap;
+    flex-direction: row;
+    gap: 5px;
+}
+
+.vstack {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch; /* 子元素沿交叉轴拉伸以适应容器 */
+}
+
+/* 附加本项目的css */
+.model-selected {
+    background-color: #419730 !important;
+}
