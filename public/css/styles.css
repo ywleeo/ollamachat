@@ -73,6 +73,7 @@ div::-webkit-scrollbar {
 
 .status-available:hover {
     background-color: #329dc8;
+    transition: none;
 }
 
 .status-loading {

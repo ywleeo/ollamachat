@@ -91,7 +91,7 @@ app.post('/api/close', async (req, res) => {
     try {
         
         // Use exec to run the ollama stop command
-        const { stdout, stderr } = await execPromise(`ollama stop ${model}`);
+        const { stdout, stderr } = await execPromise(`ollama stop ${model} > /dev/null 2>&1`);
         
         if (stderr) {
             console.warn(`Warning when stopping model: ${stderr}`);

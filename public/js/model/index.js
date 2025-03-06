@@ -12,6 +12,24 @@ import {
 } from "../util/api.js";
 
 let selectedModel = 'deepseek-r1:14b'; // Default selected model
+
+// Check loaded model on page load
+(async function() {
+    console.log('Checking loaded models...');
+    const models = await getModels();
+    let modelFound = false;
+    models.forEach(model => {
+        if (isModelLoaded(model.name)) {
+            selectedModel = model.name;
+            modelFound = true;
+            console.log(`Model ${model.name} is loaded.`);
+        }
+    });
+    if (!modelFound) {
+        await preloadSelectedModel();
+    }
+})();
+
 const chatbox = $("#chatbox");
 const messagebox = $("#messagebox");
 let messageHistory = []; // Store message history
@@ -41,7 +59,11 @@ async function initModelList(containerId) {
         
         modelButton.text(model.name);
         
-        if (model.name === selectedModel) {
+        // Check if model is already loaded
+        if (isModelLoaded(model.name)) {
+            selectedModel = model.name;
+            modelButton.addClass('model-selected');
+        } else if (model.name === selectedModel) {
             modelButton.addClass('model-selected');
             // Attempt to preload the default model
             preloadSelectedModel();

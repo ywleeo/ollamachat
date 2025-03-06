@@ -106,6 +106,7 @@ async function preloadModel(modelName) {
         await processModelInitResponse(reader);
         
         // Update model status
+        console.log(`Model ${modelName} loaded successfully`);
         currentlyLoadedModel = modelName;
         modelLoadStatus[modelName] = 'loaded';
         return true;
