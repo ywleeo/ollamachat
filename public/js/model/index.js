@@ -16,30 +16,18 @@ let selectedModel = 'deepseek-r1:14b'; // Default selected model
 
 // Check loaded model on page load
 (async function() {
-    console.log('Checking loaded models...');
-    // 首先检查是否有已加载的模型
+    // First check if there's already a loaded model
     const loadedModel = await getLoadedModel();
     
     if (loadedModel) {
         selectedModel = loadedModel;
-        console.log(`Model ${loadedModel} is already loaded.`);
     } else {
-        // 如果没有已加载模型，才检查默认模型
-        const models = await getModels();
-        let modelFound = false;
-        
-        models.forEach(model => {
-            if (isModelLoaded(model.name)) {
-                selectedModel = model.name;
-                modelFound = true;
-                console.log(`Model ${model.name} is loaded.`);
-            }
-        });
-        
-        if (!modelFound) {
-            await preloadSelectedModel();
-        }
+        // Only preload the default model if nothing is loaded
+        await preloadSelectedModel();
     }
+    
+    // Initialize the model list UI after determining the loaded model
+    await initModelList('model-list-container');
 })();
 
 const chatbox = $("#chatbox");
@@ -71,15 +59,15 @@ async function initModelList(containerId) {
         
         modelButton.text(model.name);
         
+        // Check if this model is the loaded/selected one
         if (model.name === selectedModel) {
             modelButton.addClass('model-selected');
-            // 如果已经加载，更新状态
+            
+            // Update button status based on current model state
             if (isModelLoaded(model.name)) {
                 updateButtonStatus(modelButton, 'loaded');
             } else {
-                // 只有当模型不是已加载状态时才尝试预加载
                 updateButtonStatus(modelButton, 'loading');
-                preloadSelectedModel();
             }
         }
         

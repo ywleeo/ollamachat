@@ -132,20 +132,29 @@ app.get('/api/models', async (req, res) => {
 
 app.get('/api/loaded-model', async (req, res) => {
     try {
-        // Ollama 提供了查询模型状态的API
-        const response = await fetch('http://localhost:11434/api/show', {
-            method: 'GET',
-            headers: { 'Content-Type': 'application/json' }
-        });
-
-        if (response.ok) {
-            const data = await response.json();
-            // 如果有模型已加载，返回模型信息
-            res.json({ loadedModel: data.model || null });
-        } else {
-            // 如果Ollama没有返回有效信息，假设没有模型加载
-            res.json({ loadedModel: null });
+        // Use the ollama ps command to check for running models
+        const { stdout, stderr } = await execPromise('ollama ps');
+        
+        if (stderr) {
+            console.warn(`Warning when checking models: ${stderr}`);
         }
+        
+        if (stdout) {
+            // Parse the output to find the first running model
+            const lines = stdout.split('\n').filter(line => line.trim());
+            // Skip the header line
+            if (lines.length > 1) {
+                // Extract model name from the first model line
+                // Format is: NAME ID SIZE PROCESSOR UNTIL
+                const modelLine = lines[1].trim();
+                const modelName = modelLine.split(/\s+/)[0]; // Get first column (NAME)
+                
+                res.json({ loadedModel: modelName });
+                return;
+            }
+        }
+        
+        res.json({ loadedModel: null });
     } catch (error) {
         console.error("Error checking loaded model:", error);
         res.json({ loadedModel: null });
