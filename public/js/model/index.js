@@ -8,7 +8,8 @@ import {
     preloadModel,
     closeCurrentModel,
     isModelLoaded,
-    getModelStatus
+    getModelStatus,
+    getLoadedModel
 } from "../util/api.js";
 
 let selectedModel = 'deepseek-r1:14b'; // Default selected model
@@ -16,17 +17,28 @@ let selectedModel = 'deepseek-r1:14b'; // Default selected model
 // Check loaded model on page load
 (async function() {
     console.log('Checking loaded models...');
-    const models = await getModels();
-    let modelFound = false;
-    models.forEach(model => {
-        if (isModelLoaded(model.name)) {
-            selectedModel = model.name;
-            modelFound = true;
-            console.log(`Model ${model.name} is loaded.`);
+    // 首先检查是否有已加载的模型
+    const loadedModel = await getLoadedModel();
+    
+    if (loadedModel) {
+        selectedModel = loadedModel;
+        console.log(`Model ${loadedModel} is already loaded.`);
+    } else {
+        // 如果没有已加载模型，才检查默认模型
+        const models = await getModels();
+        let modelFound = false;
+        
+        models.forEach(model => {
+            if (isModelLoaded(model.name)) {
+                selectedModel = model.name;
+                modelFound = true;
+                console.log(`Model ${model.name} is loaded.`);
+            }
+        });
+        
+        if (!modelFound) {
+            await preloadSelectedModel();
         }
-    });
-    if (!modelFound) {
-        await preloadSelectedModel();
     }
 })();
 
@@ -59,14 +71,16 @@ async function initModelList(containerId) {
         
         modelButton.text(model.name);
         
-        // Check if model is already loaded
-        if (isModelLoaded(model.name)) {
-            selectedModel = model.name;
+        if (model.name === selectedModel) {
             modelButton.addClass('model-selected');
-        } else if (model.name === selectedModel) {
-            modelButton.addClass('model-selected');
-            // Attempt to preload the default model
-            preloadSelectedModel();
+            // 如果已经加载，更新状态
+            if (isModelLoaded(model.name)) {
+                updateButtonStatus(modelButton, 'loaded');
+            } else {
+                // 只有当模型不是已加载状态时才尝试预加载
+                updateButtonStatus(modelButton, 'loading');
+                preloadSelectedModel();
+            }
         }
         
         modelButton.on('click', async () => {

@@ -130,6 +130,28 @@ app.get('/api/models', async (req, res) => {
     }
 });
 
+app.get('/api/loaded-model', async (req, res) => {
+    try {
+        // Ollama 提供了查询模型状态的API
+        const response = await fetch('http://localhost:11434/api/show', {
+            method: 'GET',
+            headers: { 'Content-Type': 'application/json' }
+        });
+
+        if (response.ok) {
+            const data = await response.json();
+            // 如果有模型已加载，返回模型信息
+            res.json({ loadedModel: data.model || null });
+        } else {
+            // 如果Ollama没有返回有效信息，假设没有模型加载
+            res.json({ loadedModel: null });
+        }
+    } catch (error) {
+        console.error("Error checking loaded model:", error);
+        res.json({ loadedModel: null });
+    }
+});
+
 app.listen(port, () => {
     console.log(`Server running... http://127.0.0.1:${port}`);
 });

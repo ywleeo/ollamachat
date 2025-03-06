@@ -33,6 +33,32 @@ async function getModels() {
     }
 }
 
+async function getLoadedModel() {
+    try {
+        const response = await fetch('/api/loaded-model', {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        });
+        
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        
+        const data = await response.json();
+        if (data.loadedModel) {
+            currentlyLoadedModel = data.loadedModel;
+            modelLoadStatus[data.loadedModel] = 'loaded';
+        }
+        
+        return data.loadedModel;
+    } catch (error) {
+        console.error("Failed to fetch loaded model:", error);
+        return null;
+    }
+}
+
 // Check if model is loaded
 function isModelLoaded(modelName) {
     return currentlyLoadedModel === modelName;
@@ -239,5 +265,6 @@ export {
     preloadModel,
     closeCurrentModel,
     isModelLoaded,
-    getModelStatus
+    getModelStatus,
+    getLoadedModel
 };
