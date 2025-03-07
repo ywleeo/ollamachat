@@ -4,8 +4,12 @@
 <head>
     <title>Ollama Chat</title>
     <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
-    <link rel="stylesheet" href="css/styles.css">
-    <script type="module" src="main.js"></script>
+    <!-- Updated CSS paths -->
+    <link rel="stylesheet" href="styles/main.css">
+    <link rel="stylesheet" href="styles/chat.css">
+    <link rel="stylesheet" href="styles/models.css">
+    <!-- Updated JS path -->
+    <script type="module" src="src/main.js"></script>
 </head>
 
 <body>
@@ -21,7 +25,7 @@
         </div>
         <div id="right-side" class="vstack">
             <div id="chatbox" class="ol">
-                <div class="message user">You: Hello there!</div>
+                <div class="message user">Hello there!</div>
                 <div class="message ollama">
                     <div class="content">Hello! How can I assist you today? Feel free to ask any questions or let me know what you'd like to discuss.</div>
                     <div class="stats">Welcome to Ollama Chat</div>
