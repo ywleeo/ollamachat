@@ -34,7 +34,8 @@ class Chatbox {
     // Process assistant messages
     ollamaMessages.elements.forEach(el => {
       const content = el.querySelector('.content')?.textContent || '';
-      initialMessages.push({ role: 'assistant', content });
+      const stats = el.querySelector('.stats')?.textContent || '';
+      initialMessages.push({ role: 'assistant', content, stats });
     });
     
     if (initialMessages.length > 0) {
@@ -54,7 +55,7 @@ class Chatbox {
       if (message.role === 'user') {
         this.renderUserMessage(message.content);
       } else {
-        this.renderAssistantMessage(message.content);
+        this.renderAssistantMessage(message.content, message.stats || '');
       }
     });
     
@@ -64,12 +65,12 @@ class Chatbox {
   renderUserMessage(text) {
     const messageDiv = $.create('div', {
       attributes: { class: 'message user' }
-    }).text(`# ${text}`);
+    }).text(text);
     
     this.element.appendChild(messageDiv);
   }
 
-  renderAssistantMessage(text) {
+  renderAssistantMessage(text, stats) {
     const messageDiv = $.create('div', {
       attributes: { class: 'message ollama' }
     });
@@ -80,7 +81,7 @@ class Chatbox {
     
     const statsDiv = $.create('div', {
       attributes: { class: 'stats' }
-    }).text('Welcome to Ollama Chat');
+    }).text(stats || 'Welcome to Ollama Chat');
     
     messageDiv.appendChild(contentDiv);
     messageDiv.appendChild(statsDiv);

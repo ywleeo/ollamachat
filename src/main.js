@@ -15,7 +15,7 @@ class OllamaChat {
     
     // Debug: Log state changes to console
     store.subscribe(state => {
-      console.log('State updated:', state);
+      // console.log('State updated:', state);
     });
     
     // Initialize app state

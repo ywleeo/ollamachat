@@ -6,6 +6,11 @@ class Messagebox {
   constructor(element) {
     this.element = element || $('#messagebox');
     this.isComposing = false;
+    this.responseStats = {
+      startTime: null,
+      tokens: 0,
+      duration: 0
+    };
     
     this.setupEventListeners();
     
@@ -49,6 +54,14 @@ class Messagebox {
 
   async handleSendMessage(message) {
     try {
+      // Reset stats for new message
+      this.responseStats = {
+        startTime: Date.now(),
+        tokens: 0,
+        duration: 0,
+        prevText: ''
+      };
+      
       const reader = await sendMessage(message);
       
       // Process the stream
@@ -71,7 +84,10 @@ class Messagebox {
             }
             
             if (data.done) {
-              addAssistantResponse(fullResponse);
+              // Calculate final stats
+              this.responseStats.duration = (Date.now() - this.responseStats.startTime) / 1000;
+              const finalStats = this.formatStats(this.responseStats);
+              addAssistantResponse(fullResponse, finalStats);
             }
           } catch (error) {
             console.error('JSON parse error:', error);
@@ -85,10 +101,19 @@ class Messagebox {
   }
 
   updateAssistantResponse(text) {
+    // Update token count for stats
+    const newTokens = this.countTokens(text, this.responseStats.prevText);
+    this.responseStats.tokens += newTokens;
+    this.responseStats.prevText = text;
+    
+    // Format the stats string
+    const statsText = this.formatStats(this.responseStats);
+    
     // This will be used to update the response in real-time
     const lastMessage = $('.message.ollama:last-child');
     if (lastMessage.elements.length > 0) {
       lastMessage.find('.content').text(text);
+      lastMessage.find('.stats').text(statsText);
     } else {
       // Create a new message container if none exists
       const messageDiv = $.create('div', {
@@ -99,7 +124,7 @@ class Messagebox {
       }).text(text);
       const statsDiv = $.create('div', {
         attributes: { class: 'stats' }
-      });
+      }).text(statsText);
       
       messageDiv.appendChild(contentDiv);
       messageDiv.appendChild(statsDiv);
@@ -108,6 +133,21 @@ class Messagebox {
     
     // Scroll to bottom
     $('#chatbox').get(0).scrollTop = $('#chatbox').get(0).scrollHeight;
+  }
+  
+  formatStats(stats) {
+    const elapsedSecs = (Date.now() - stats.startTime) / 1000;
+    const tokensPerSecond = elapsedSecs > 0 ? (stats.tokens / elapsedSecs).toFixed(1) : 0;
+    return `${stats.tokens} tokens | ${tokensPerSecond} tokens/s`;
+  }
+  
+  // Simple token counter (rough estimate)
+  countTokens(text, prevText) {
+    // Get only new text since last update
+    const newText = text.slice(prevText.length);
+    // Split by whitespace and punctuation for a rough token count
+    // This is just an approximation - real tokenizers are more complex
+    return newText.split(/[\s,.!?;:"'-]+/).filter(Boolean).length || 1;
   }
 
   getText() {

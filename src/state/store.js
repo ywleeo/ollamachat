@@ -21,7 +21,6 @@ class Store {
         const persistedModel = localStorage.getItem('selectedModel');
         const persistedLoadedModel = localStorage.getItem('loadedModel');
         
-        console.log('Loading persisted state:', { persistedModel, persistedLoadedModel });
         
         if (persistedModel) {
           this.state.selectedModel = persistedModel;
@@ -48,7 +47,7 @@ class Store {
     }
   
     setState(newState) {
-      console.log('Setting state:', newState);
+      // console.log('Setting state:', newState);
       this.state = { ...this.state, ...newState };
       this.notifyListeners();
     }

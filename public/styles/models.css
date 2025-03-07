@@ -17,6 +17,7 @@
 }
 
 .model-button.model-selected {
+    background-color: #419730;
     font-weight: bold;
 }
 
@@ -45,8 +46,7 @@
     background-color: #c97c00;
     color: #ffffff;
     animation: pulse 1.5s infinite;
-    padding: 10px 15px;
-    text-shadow: 0 1px 1px rgba(0, 0, 0, 0.4);
+    padding: 4px 12px;
 }
 
 .status-loaded {
