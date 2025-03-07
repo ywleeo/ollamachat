@@ -22,6 +22,11 @@
     margin-bottom: .5em;
 }
 
+#chatbox .message .sender {
+    font-weight: bold;
+    margin-right: 5px;
+}
+
 #chatbox div.user {
     color: #222;
     background-color: #c2b28b;

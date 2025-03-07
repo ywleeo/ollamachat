@@ -131,7 +131,7 @@ export async function sendMessage(message) {
     // Add user message to history
     const updatedHistory = [
         ...messageHistory,
-        { role: "user", content: message },
+        { role: "user", content: message, sender: "You" },
     ];
 
     store.setState({
@@ -202,6 +202,7 @@ export function addAssistantResponse(content, statsText = "") {
                 role: "assistant",
                 content,
                 stats: statsText,
+                sender: "Ollama",
             },
         ],
         isResponding: false,

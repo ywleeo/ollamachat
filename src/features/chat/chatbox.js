@@ -25,17 +25,15 @@ class Chatbox {
         const userMessages = this.element.find(".message.user");
         const ollamaMessages = this.element.find(".message.ollama");
 
-        // Process user messages
         userMessages.elements.forEach((el) => {
             const text = el.textContent.replace("You: ", "");
-            initialMessages.push({ role: "user", content: text });
+            initialMessages.push({ role: "user", content: text, sender: "You" });
         });
-
-        // Process assistant messages
+        
         ollamaMessages.elements.forEach((el) => {
             const content = el.querySelector(".content")?.textContent || "";
             const stats = el.querySelector(".stats")?.textContent || "";
-            initialMessages.push({ role: "assistant", content, stats });
+            initialMessages.push({ role: "assistant", content, stats, sender: "Ollama" });
         });
 
         if (initialMessages.length > 0) {
@@ -65,27 +63,42 @@ class Chatbox {
         this.scrollToBottom();
     }
 
-    renderUserMessage(text) {
+    renderUserMessage(text, sender = "You") {
         const messageDiv = $.create("div", {
             attributes: { class: "message user" },
+        });
+        
+        const senderSpan = $.create("span", {
+            attributes: { class: "sender" },
+        }).text(`${sender}: `);
+        
+        const contentSpan = $.create("span", {
+            attributes: { class: "content" },
         }).text(text);
-
+        
+        messageDiv.appendChild(senderSpan);
+        messageDiv.appendChild(contentSpan);
         this.element.appendChild(messageDiv);
     }
 
-    renderAssistantMessage(text, stats) {
+    renderAssistantMessage(text, stats, sender = "Ollama") {
         const messageDiv = $.create("div", {
             attributes: { class: "message ollama" },
         });
-
+        
+        const senderSpan = $.create("span", {
+            attributes: { class: "sender" },
+        }).text(`${sender}: `);
+    
         const contentDiv = $.create("div", {
             attributes: { class: "content" },
         }).text(text);
-
+    
         const statsDiv = $.create("div", {
             attributes: { class: "stats" },
         }).text(stats || "Welcome to Ollama Chat");
-
+    
+        messageDiv.appendChild(senderSpan);
         messageDiv.appendChild(contentDiv);
         messageDiv.appendChild(statsDiv);
         this.element.appendChild(messageDiv);

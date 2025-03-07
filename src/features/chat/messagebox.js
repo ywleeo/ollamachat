@@ -142,6 +142,12 @@ class Messagebox {
             const messageDiv = $.create("div", {
                 attributes: { class: "message ollama" },
             });
+            
+            // Add sender name (new code)
+            const senderSpan = $.create("span", {
+                attributes: { class: "sender" },
+            }).text("Ollama: ");
+            
             const contentDiv = $.create("div", {
                 attributes: { class: "content" },
             }).text(text);
@@ -149,6 +155,7 @@ class Messagebox {
                 attributes: { class: "stats" },
             }).text(statsText);
 
+            messageDiv.appendChild(senderSpan);  // Add this line
             messageDiv.appendChild(contentDiv);
             messageDiv.appendChild(statsDiv);
             $("#chatbox").appendChild(messageDiv);
