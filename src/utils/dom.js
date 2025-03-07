@@ -3,8 +3,12 @@ class DOMQuery {
     constructor(selector) {
       if (selector instanceof HTMLElement) {
         this.elements = [selector];
-      } else {
+      } else if (typeof selector === 'string') {
         this.elements = Array.from(document.querySelectorAll(selector));
+      } else if (selector instanceof DOMQuery) {
+        this.elements = [...selector.elements];
+      } else {
+        this.elements = [];
       }
     }
   
@@ -77,13 +81,19 @@ class DOMQuery {
     }
   
     appendChild(child) {
-      if (child instanceof DOMQuery) {
-        child = child.elements[0];
-      }
+      if (this.elements.length === 0) return this;
       
-      this.elements.forEach(parent => {
-        parent.appendChild(child.cloneNode(true));
-      });
+      if (child instanceof DOMQuery) {
+        if (child.elements.length > 0) {
+          this.elements.forEach(parent => {
+            parent.appendChild(child.elements[0].cloneNode(true));
+          });
+        }
+      } else if (child instanceof HTMLElement) {
+        this.elements.forEach(parent => {
+          parent.appendChild(child.cloneNode(true));
+        });
+      }
       
       return this;
     }

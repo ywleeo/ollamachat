@@ -4,6 +4,10 @@ import store from '../../state/store.js';
 class Chatbox {
   constructor(element) {
     this.element = element || $('#chatbox');
+    this._lastMessageHistory = [];
+    
+    // Get initial messages from HTML if present
+    this.saveInitialMessages();
     
     // Listen for state changes
     store.subscribe(state => {
@@ -13,6 +17,30 @@ class Chatbox {
         this.renderMessages();
       }
     });
+  }
+
+  saveInitialMessages() {
+    // Save any initial messages that are in the HTML
+    const initialMessages = [];
+    const userMessages = this.element.find('.message.user');
+    const ollamaMessages = this.element.find('.message.ollama');
+    
+    // Process user messages
+    userMessages.elements.forEach(el => {
+      const text = el.textContent.replace('You: ', '');
+      initialMessages.push({ role: 'user', content: text });
+    });
+    
+    // Process assistant messages
+    ollamaMessages.elements.forEach(el => {
+      const content = el.querySelector('.content')?.textContent || '';
+      initialMessages.push({ role: 'assistant', content });
+    });
+    
+    if (initialMessages.length > 0) {
+      // Update the store with initial messages
+      store.setState({ messageHistory: initialMessages });
+    }
   }
 
   renderMessages() {
@@ -52,7 +80,7 @@ class Chatbox {
     
     const statsDiv = $.create('div', {
       attributes: { class: 'stats' }
-    });
+    }).text('Welcome to Ollama Chat');
     
     messageDiv.appendChild(contentDiv);
     messageDiv.appendChild(statsDiv);
