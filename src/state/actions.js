@@ -31,6 +31,7 @@ export async function initializeModels() {
 }
 
 export async function selectModel(modelName) {
+    console.log("selectModel called with:", modelName);
     const { loadedModel, modelStatus } = store.getState();
 
     // Skip if already in a transition state
@@ -54,32 +55,40 @@ export async function selectModel(modelName) {
     // If there's already a model loaded and it's different from the selected one
     if (loadedModel && loadedModel !== modelName) {
         // Set loading state for the closing operation
+        const updatedStatus = { ...store.getState().modelStatus };
+        updatedStatus[loadedModel] = "closing";
+
         store.setState({
-            modelStatus: {
-                ...store.getState().modelStatus,
-                [loadedModel]: "closing",
-            },
+            modelStatus: updatedStatus,
         });
 
         try {
-            // Close the current model
+            // Close the current model - this is an async operation
             await closeModel(loadedModel);
 
-            // Clear the status for closed model
-            const updatedStatus = { ...store.getState().modelStatus };
-            delete updatedStatus[loadedModel];
-            store.setState({ modelStatus: updatedStatus });
+            // Clear the status for closed model - only do this AFTER closing is complete
+            const postCloseStatus = { ...store.getState().modelStatus };
+            delete postCloseStatus[loadedModel];
+
+            store.setState({
+                loadedModel: null, // Important: mark that no model is loaded during transition
+                modelStatus: postCloseStatus,
+            });
         } catch (error) {
             console.error("Failed to close model:", error);
+            // Reset the status in case of error
+            const errorStatus = { ...store.getState().modelStatus };
+            delete errorStatus[loadedModel];
+            store.setState({ modelStatus: errorStatus });
         }
     }
 
-    // Set loading state for the new model
+    // Now that previous model is fully closed, start loading the new one
+    const loadingStatus = { ...store.getState().modelStatus };
+    loadingStatus[modelName] = "loading";
+
     store.setState({
-        modelStatus: {
-            ...store.getState().modelStatus,
-            [modelName]: "loading",
-        },
+        modelStatus: loadingStatus,
     });
 
     try {
@@ -87,23 +96,23 @@ export async function selectModel(modelName) {
         await loadModel(modelName);
 
         // Update the state to show the model is loaded
+        const loadedStatus = { ...store.getState().modelStatus };
+        loadedStatus[modelName] = "loaded";
+
         store.setState({
             loadedModel: modelName,
-            modelStatus: {
-                ...store.getState().modelStatus,
-                [modelName]: "loaded",
-            },
+            modelStatus: loadedStatus,
         });
 
         // Store loaded model in localStorage
         localStorage.setItem("loadedModel", modelName);
     } catch (error) {
         // Handle loading error
+        const errorStatus = { ...store.getState().modelStatus };
+        errorStatus[modelName] = "error";
+
         store.setState({
-            modelStatus: {
-                ...store.getState().modelStatus,
-                [modelName]: "error",
-            },
+            modelStatus: errorStatus,
         });
         console.error("Failed to load model:", error);
     }
@@ -145,7 +154,7 @@ export function addAssistantResponse(content, statsText = "") {
             {
                 role: "assistant",
                 content,
-                stats: statsText, // Store stats with the message
+                stats: statsText,
             },
         ],
         isResponding: false,

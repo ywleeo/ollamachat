@@ -2,16 +2,53 @@
 import $ from "../../utils/dom.js";
 import store from "../../state/store.js";
 import { selectModel } from "../../state/actions.js";
-import { loadModel, closeModel } from "../../api/models.js";
 
 class ModelList {
     constructor(container) {
         this.container = container || $("#model-list-container");
 
+        // Add a click handler to the container for event delegation
+        if (this.container.elements[0]) {
+            this.container.elements[0].addEventListener(
+                "click",
+                this.handleContainerClick.bind(this)
+            );
+        }
+
         // Subscribe to state changes
         store.subscribe((state) => {
             this.render(state);
         });
+    }
+
+    handleContainerClick(event) {
+        // Check if a button was clicked
+        if (event.target.classList.contains("model-button")) {
+            // Skip if the button is disabled or has model-selected class
+            if (
+                event.target.classList.contains("disabled") ||
+                event.target.classList.contains("model-selected")
+            ) {
+                return;
+            }
+
+            const modelName = event.target.getAttribute("data-model");
+            if (modelName) {
+                const state = store.getState();
+                const currentStatus =
+                    state.modelStatus && state.modelStatus[modelName]
+                        ? state.modelStatus[modelName]
+                        : "available";
+
+                // Only trigger if not already loading or closing
+                if (
+                    currentStatus !== "loading" &&
+                    currentStatus !== "closing"
+                ) {
+                    selectModel(modelName);
+                }
+            }
+        }
     }
 
     render(state) {
@@ -36,48 +73,52 @@ class ModelList {
 
             let statusClass = "status-available";
             let buttonText = model.name;
+            let isDisabled = false;
 
+            // Set appropriate status class and check if button should be disabled
             if (currentStatus === "loading") {
                 statusClass = "status-loading";
                 buttonText = `Loading ${model.name}...`;
+                isDisabled = true;
             } else if (currentStatus === "closing") {
                 statusClass = "status-loading";
                 buttonText = `Closing ${model.name}...`;
+                isDisabled = true;
             } else if (currentStatus === "error") {
                 statusClass = "status-error";
             } else if (isLoaded) {
                 statusClass = "status-loaded";
+                // Disable if already loaded and selected
+                isDisabled = isSelected;
             }
 
             // Always add model-selected class if this is the selected model
             const buttonClass = `model-button ${
                 isSelected ? "model-selected" : ""
-            } ${statusClass}`;
+            } ${statusClass} ${isDisabled ? "disabled" : ""}`;
 
-            const button = $.create("button", {
-                attributes: { class: buttonClass },
-            });
-            button.text(buttonText);
-            // Setup click handler with debug logging
-            button.on("click", (event) => {
-                if (
-                    currentStatus !== "loading" &&
-                    currentStatus !== "closing"
-                ) {
-                    selectModel(model.name);
-                }
-            });
+            // Create the button element with data attribute
+            const button = document.createElement("button");
+            button.className = buttonClass;
+            button.textContent = buttonText;
+            button.setAttribute("data-model", model.name);
 
-            this.container.appendChild(button);
+            // Append to container
+            if (this.container.elements[0]) {
+                this.container.elements[0].appendChild(button);
+            }
         });
     }
 
     renderStatus(message, statusClass) {
-        const statusElement = $.create("div", {
-            attributes: { class: `status-indicator ${statusClass}` },
-        }).text(message);
+        const statusElement = document.createElement("div");
+        statusElement.className = `status-indicator ${statusClass}`;
+        statusElement.textContent = message;
 
-        this.container.empty().appendChild(statusElement);
+        this.container.empty();
+        if (this.container.elements[0]) {
+            this.container.elements[0].appendChild(statusElement);
+        }
     }
 }
 
