@@ -4,32 +4,28 @@ import { stopResponseGeneration } from "../../state/actions.js";
 
 class ChatControls {
     constructor() {
-        // Get direct reference to the DOM element
-        this.stopButton = document.getElementById("stop-button");
-        this.bodyElement = document.body;
+        // Get references using DOM utilities
+        this.stopButton = $("#stop-button");
+        this.bodyElement = $("body");
         
         this.setupEventListeners();
         
         // Subscribe to state changes
         store.subscribe((state) => {
             if (state.isResponding) {
-                this.bodyElement.classList.add("is-responding");
+                this.bodyElement.addClass("is-responding");
             } else {
-                this.bodyElement.classList.remove("is-responding");
+                this.bodyElement.removeClass("is-responding");
             }
         });
     }
     
     setupEventListeners() {
-        // Add click handler using direct DOM method
-        if (this.stopButton) {
-            this.stopButton.addEventListener("click", () => {
-                console.log("Stop button clicked");
-                stopResponseGeneration();
-            });
-        } else {
-            console.error("Stop button not found in the DOM");
-        }
+        // Add click handler using DOM utility
+        this.stopButton.on("click", () => {
+            console.log("Stop button clicked");
+            stopResponseGeneration();
+        });
     }
 }
 
