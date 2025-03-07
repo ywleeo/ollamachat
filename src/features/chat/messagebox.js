@@ -73,39 +73,52 @@ class Messagebox {
             let fullResponse = "";
 
             while (true) {
-                const { done, value } = await reader.read();
-                if (done) break;
+                try {
+                    const { done, value } = await reader.read();
+                    if (done) break;
 
-                const chunkText = decoder.decode(value);
-                const lines = chunkText
-                    .split("\n")
-                    .filter((line) => line.trim());
+                    const chunkText = decoder.decode(value);
+                    const lines = chunkText
+                        .split("\n")
+                        .filter((line) => line.trim());
 
-                for (const line of lines) {
-                    try {
-                        const data = JSON.parse(line);
-                        if (data.chunk) {
-                            fullResponse += data.chunk;
-                            this.updateAssistantResponse(fullResponse);
+                    for (const line of lines) {
+                        try {
+                            const data = JSON.parse(line);
+                            if (data.chunk) {
+                                fullResponse += data.chunk;
+                                this.updateAssistantResponse(fullResponse);
+                            }
+
+                            if (data.done) {
+                                // Calculate final stats
+                                this.responseStats.duration =
+                                    (Date.now() - this.responseStats.startTime) /
+                                    1000;
+                                const finalStats = this.formatStats(
+                                    this.responseStats
+                                );
+                                addAssistantResponse(fullResponse, finalStats);
+                            }
+                        } catch (error) {
+                            console.error("JSON parse error:", error);
                         }
-
-                        if (data.done) {
-                            // Calculate final stats
-                            this.responseStats.duration =
-                                (Date.now() - this.responseStats.startTime) /
-                                1000;
-                            const finalStats = this.formatStats(
-                                this.responseStats
-                            );
-                            addAssistantResponse(fullResponse, finalStats);
-                        }
-                    } catch (error) {
-                        console.error("JSON parse error:", error);
+                    }
+                } catch (error) {
+                    // Check if this is an abort error (user clicked stop)
+                    if (error.name === 'AbortError') {
+                        console.log('Response generation was stopped by user');
+                        break;
+                    } else {
+                        throw error; // Re-throw unexpected errors
                     }
                 }
             }
         } catch (error) {
-            console.error("Send message failed:", error);
+            // Only log non-abort errors
+            if (error.name !== 'AbortError') {
+                console.error("Send message failed:", error);
+            }
             setResponseState(false);
         }
     }

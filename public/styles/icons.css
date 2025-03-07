@@ -1,0 +1,56 @@
+/* Message controls container */
+.messagebox-wrapper {
+    position: relative;
+    margin-bottom: 0.6em;
+  }
+  
+  #messagebox {
+    margin-bottom: 0 !important;
+  }
+  
+  #message-controls {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    z-index: 10;
+  }
+  
+  /* Icon button */
+  .icon-button {
+    background: rgba(60, 60, 60, 0.8);
+    border: none;
+    cursor: pointer;
+    width: 28px;
+    height: 28px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    transition: all 0.2s ease;
+  }
+  
+  .icon-button:hover {
+    background: rgba(80, 80, 80, 0.9);
+  }
+  
+  .icon-button svg {
+    fill: #ccc;
+    width: 14px;
+    height: 14px;
+  }
+  
+  /* Hide stop button by default */
+  #stop-button {
+    display: none;
+  }
+  
+  /* Show stop button when responding */
+  body.is-responding #stop-button {
+    display: flex;
+    animation: fadeIn 0.3s ease;
+  }
+  
+  @keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }

@@ -42,6 +42,11 @@
     text-align: right;
 }
 
+/* Messagebox container */
+#messagebox-container {
+    margin-bottom: 0.6em;
+}
+
 /* Messagebox styling */
 #messagebox {
     height: 200px;

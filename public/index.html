@@ -8,6 +8,7 @@
     <link rel="stylesheet" href="styles/main.css">
     <link rel="stylesheet" href="styles/chat.css">
     <link rel="stylesheet" href="styles/models.css">
+    <link rel="stylesheet" href="styles/icons.css">
     <!-- Updated JS path -->
     <script type="module" src="src/main.js"></script>
 </head>
@@ -31,7 +32,16 @@
                     <div class="stats">Welcome to Ollama Chat</div>
                 </div>
             </div>
-            <div id="messagebox" contenteditable="true" placeholder="Type your message here..."></div>
+            <div class="messagebox-wrapper">
+                <div id="messagebox" contenteditable="true" placeholder="Type your message here..."></div>
+                <div id="message-controls">
+                    <button id="stop-button" class="icon-button" title="Stop generating">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                            <path d="M6 6h12v12H6z"/>
+                        </svg>
+                    </button>
+                </div>
+            </div>
         </div>
     </div>
 </body>

@@ -8,6 +8,9 @@ import {
 } from "../api/models.js";
 import { sendChatMessage } from "../api/chat.js";
 
+// Add a global variable to hold the current reader controller
+let currentResponseController = null;
+
 export async function initializeModels() {
     try {
         const loadedModel = await getLoadedModel();
@@ -137,11 +140,55 @@ export async function sendMessage(message) {
     });
 
     try {
-        const response = await sendChatMessage(selectedModel, updatedHistory);
+        // Create an AbortController to allow stopping the response
+        const controller = new AbortController();
+        currentResponseController = controller;
+        
+        const response = await sendChatMessage(
+            selectedModel, 
+            updatedHistory, 
+            controller.signal
+        );
+        
         return response.body.getReader();
     } catch (error) {
+        // Check if this is an abort error (user clicked stop)
+        if (error.name === 'AbortError') {
+            console.log('Request was aborted by user');
+        } else {
+            console.error('Request failed:', error);
+        }
+        
         store.setState({ isResponding: false });
         throw error;
+    }
+}
+
+export function stopResponseGeneration() {
+    if (currentResponseController) {
+        // Abort the current fetch request
+        currentResponseController.abort();
+        currentResponseController = null;
+        
+        // Update state
+        store.setState({ isResponding: false });
+        
+        // Add a note that the response was stopped
+        const { messageHistory } = store.getState();
+        if (messageHistory.length > 0) {
+            const lastMessage = messageHistory[messageHistory.length - 1];
+            
+            // If the last message is from the assistant, update it to show it was stopped
+            if (lastMessage.role === 'assistant') {
+                const updatedHistory = [...messageHistory];
+                updatedHistory[updatedHistory.length - 1] = {
+                    ...lastMessage,
+                    stats: lastMessage.stats + ' [Stopped]'
+                };
+                
+                store.setState({ messageHistory: updatedHistory });
+            }
+        }
     }
 }
 

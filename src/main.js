@@ -1,6 +1,7 @@
 // src/main.js
 import Chatbox from "./features/chat/chatbox.js";
 import Messagebox from "./features/chat/messagebox.js";
+import ChatControls from "./features/chat/chat-controls.js";
 import ModelList from "./features/models/model-list.js";
 import { initializeModels } from "./state/actions.js";
 import store from "./state/store.js";
@@ -12,6 +13,7 @@ class OllamaChat {
         this.chatbox = new Chatbox();
         this.messagebox = new Messagebox();
         this.modelList = new ModelList();
+        this.chatControls = new ChatControls();
 
         // Debug: Log state changes to console
         store.subscribe((state) => {
