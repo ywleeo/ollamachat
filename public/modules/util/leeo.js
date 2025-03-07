@@ -16,6 +16,14 @@ class DataStorage {
 }
 
 class LeeoQuery {
+    /**
+     * Creates a new instance to handle DOM elements
+     * @param {(string|HTMLElement)} selector - CSS selector string or HTMLElement
+     * @constructor
+     * @description Initializes the instance by storing matched DOM elements in an array.
+     * If selector is an HTMLElement, stores it directly. Otherwise queries the document
+     * using the selector string and converts NodeList to Array.
+     */
     constructor(selector) {
         if (selector instanceof HTMLElement) {
             this.elements = [selector];

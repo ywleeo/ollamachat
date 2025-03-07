@@ -44,6 +44,8 @@ class OllamaChat {
                 (chunk, fullResponse, stats) => {
                     aiElements.content.text(fullResponse);
                     aiElements.stats.text(`Rate: ${stats.tokensPerSecond} tok/s`);
+                    // Add this line to continuously scroll to bottom with each chunk
+                    this.chatUI.scrollToBottom();
                 },
                 // onComplete callback - finalize the message
                 (fullResponse, stats) => {
@@ -52,15 +54,19 @@ class OllamaChat {
                     
                     // Add AI response to history
                     this.chatUI.addAIResponse(fullResponse);
+                    // Make sure we scroll to bottom after completion too
+                    this.chatUI.scrollToBottom();
                 },
                 // onError callback
                 (error) => {
                     aiElements.content.text(`Error sending message: ${error.message}`);
                     aiElements.stats.text('Error');
+                    this.chatUI.scrollToBottom();
                 });
         } catch (error) {
             console.error('Request failed:', error);
             aiElements.content.text(`Error sending message: ${error.message}`);
+            this.chatUI.scrollToBottom();
         }
     }
 }

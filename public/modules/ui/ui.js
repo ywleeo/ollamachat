@@ -22,6 +22,11 @@ class ChatUI {
     addAIResponse(text) {
         return this.chatbox.addAIResponse(text);
     }
+    
+    // Add this method to expose the scrollToBottom functionality
+    scrollToBottom() {
+        this.chatbox.scrollToBottom();
+    }
 }
 
 export { ChatUI };
