@@ -14,10 +14,9 @@
     transition: background-color 0.3s;
     border-radius: 2px;
     font-weight: 500;
-    text-shadow: 0 1px 1px rgba(0, 0, 0, 0.3);
 }
 
-.model-selected {
+.model-button.model-selected {
     font-weight: bold;
 }
 
@@ -30,9 +29,10 @@
     margin-bottom: 10px;
 }
 
-/* Status colors */
+/* Status colors with better contrast */
 .status-available {
     background-color: #1c7da3;
+    color: white;
 }
 
 .status-available:hover {
@@ -40,6 +40,7 @@
     transition: none;
 }
 
+/* More visible loading state */
 .status-loading {
     background-color: #c97c00;
     color: #ffffff;
@@ -50,10 +51,12 @@
 
 .status-loaded {
     background-color: #419730;
+    color: white;
 }
 
 .status-error {
     background-color: #973030;
+    color: white;
 }
 
 /* Model loader (optional) */
@@ -72,8 +75,6 @@
     width: 0;
     height: 0;
     box-sizing: border-box;
-    border: 8px solid #fff;
-    border-color: #fff transparent #fff transparent;
     animation: model-loader 1.2s infinite;
 }
 
@@ -89,4 +90,11 @@
     100% {
         transform: rotate(360deg);
     }
+}
+
+/* More obvious pulsing animation */
+@keyframes pulse {
+    0% { opacity: 0.6; }
+    50% { opacity: 1; }
+    100% { opacity: 0.6; }
 }

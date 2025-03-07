@@ -1,3 +1,4 @@
+// server/routes/index.js
 import express from 'express';
 import * as ollamaService from '../services/ollama-service.js';
 
@@ -33,6 +34,25 @@ router.post('/close', async (req, res) => {
     res.json({ success: true });
   } catch (error) {
     res.json({ success: false, error: error.message });
+  }
+});
+
+// Add a new endpoint to load models
+router.post('/load', async (req, res) => {
+  const { model } = req.body;
+  
+  if (!model) {
+    return res.status(400).json({ error: 'Model name is required' });
+  }
+  
+  try {
+    // In a real implementation you would use a service to load the model
+    // This is just a placeholder - ollamaService.loadModel is not implemented yet
+    // For now we'll just return success after a delay to simulate loading
+    await new Promise(resolve => setTimeout(resolve, 1000));
+    res.json({ success: true });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
   }
 });
 
