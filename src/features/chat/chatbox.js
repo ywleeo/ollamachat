@@ -64,7 +64,7 @@ class Chatbox {
   renderUserMessage(text) {
     const messageDiv = $.create('div', {
       attributes: { class: 'message user' }
-    }).text(`You: ${text}`);
+    }).text(`# ${text}`);
     
     this.element.appendChild(messageDiv);
   }
