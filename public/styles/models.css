@@ -1,0 +1,92 @@
+/* Model container */
+#model-list-container {
+    margin-bottom: 20px;
+}
+
+/* Model buttons */
+.model-button {
+    width: 100%;
+    text-align: left;
+    padding: 4px 12px;
+    color: #fff;
+    border: 0;
+    margin-bottom: 2px;
+    transition: background-color 0.3s;
+    border-radius: 2px;
+    font-weight: 500;
+    text-shadow: 0 1px 1px rgba(0, 0, 0, 0.3);
+}
+
+.model-selected {
+    font-weight: bold;
+}
+
+/* Status indicator */
+.status-indicator {
+    display: block;
+    padding: 10px 15px;
+    border-radius: 4px;
+    font-weight: 500;
+    margin-bottom: 10px;
+}
+
+/* Status colors */
+.status-available {
+    background-color: #1c7da3;
+}
+
+.status-available:hover {
+    background-color: #329dc8;
+    transition: none;
+}
+
+.status-loading {
+    background-color: #c97c00;
+    color: #ffffff;
+    animation: pulse 1.5s infinite;
+    padding: 10px 15px;
+    text-shadow: 0 1px 1px rgba(0, 0, 0, 0.4);
+}
+
+.status-loaded {
+    background-color: #419730;
+}
+
+.status-error {
+    background-color: #973030;
+}
+
+/* Model loader (optional) */
+.model-loader {
+    display: inline-block;
+    position: relative;
+    width: 16px;
+    height: 16px;
+    margin-right: 8px;
+}
+
+.model-loader:after {
+    content: " ";
+    display: block;
+    border-radius: 50%;
+    width: 0;
+    height: 0;
+    box-sizing: border-box;
+    border: 8px solid #fff;
+    border-color: #fff transparent #fff transparent;
+    animation: model-loader 1.2s infinite;
+}
+
+@keyframes model-loader {
+    0% {
+        transform: rotate(0);
+        animation-timing-function: cubic-bezier(0.55, 0.055, 0.675, 0.19);
+    }
+    50% {
+        transform: rotate(180deg);
+        animation-timing-function: cubic-bezier(0.215, 0.61, 0.355, 1);
+    }
+    100% {
+        transform: rotate(360deg);
+    }
+}
