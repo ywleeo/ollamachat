@@ -34,6 +34,9 @@ class OllamaChat {
         // Prepare UI for AI response
         const aiElements = this.chatUI.prepareAIResponse();
         
+        // Disable messagebox while AI is responding
+        this.chatUI.disableMessagebox();
+        
         try {
             // Send the message and get reader
             const reader = await this.models.sendMessage(messageHistory);
@@ -56,17 +59,26 @@ class OllamaChat {
                     this.chatUI.addAIResponse(fullResponse);
                     // Make sure we scroll to bottom after completion too
                     this.chatUI.scrollToBottom();
+                    
+                    // Re-enable messagebox after response is complete
+                    this.chatUI.enableMessagebox();
                 },
                 // onError callback
                 (error) => {
                     aiElements.content.text(`Error sending message: ${error.message}`);
                     aiElements.stats.text('Error');
                     this.chatUI.scrollToBottom();
+                    
+                    // Re-enable messagebox even if there's an error
+                    this.chatUI.enableMessagebox();
                 });
         } catch (error) {
             console.error('Request failed:', error);
             aiElements.content.text(`Error sending message: ${error.message}`);
             this.chatUI.scrollToBottom();
+            
+            // Re-enable messagebox if request fails
+            this.chatUI.enableMessagebox();
         }
     }
 }

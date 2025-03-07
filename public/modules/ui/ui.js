@@ -27,6 +27,15 @@ class ChatUI {
     scrollToBottom() {
         this.chatbox.scrollToBottom();
     }
+    
+    // Add these methods to control the messagebox state
+    disableMessagebox() {
+        this.messagebox.disable();
+    }
+    
+    enableMessagebox() {
+        this.messagebox.enable();
+    }
 }
 
 export { ChatUI };
