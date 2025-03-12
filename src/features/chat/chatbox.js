@@ -6,6 +6,8 @@ class Chatbox {
     constructor(element) {
         this.element = element || $("#chatbox");
         this._lastMessageHistory = [];
+        this.autoScroll = true;
+        this.scrollThreshold = 30; // pixels from bottom to consider "at bottom"
 
         // Get initial messages from HTML if present
         this.saveInitialMessages();
@@ -13,12 +15,29 @@ class Chatbox {
         // Add the clear button
         this.addClearButton();
 
+        // Setup scroll detection
+        this.setupScrollDetection();
+
         // Listen for state changes
         store.subscribe((state) => {
             // Only update UI when message history changes
             if (state.messageHistory !== this._lastMessageHistory) {
                 this._lastMessageHistory = state.messageHistory;
                 this.renderMessages();
+            }
+        });
+    }
+    
+    setupScrollDetection() {
+        // Detect manual scrolling
+        this.element.on("scroll", () => {
+            const element = this.element.get(0);
+            const isAtBottom = element.scrollHeight - element.scrollTop - element.clientHeight <= this.scrollThreshold;
+            
+            // Only change autoScroll if it's different from current state
+            if (this.autoScroll !== isAtBottom) {
+                this.autoScroll = isAtBottom;
+                // console.log("Auto scroll:", this.autoScroll);
             }
         });
     }
@@ -108,7 +127,10 @@ class Chatbox {
             }
         });
 
-        this.scrollToBottom();
+        // Only scroll to bottom if autoScroll is enabled
+        if (this.autoScroll) {
+            this.scrollToBottom();
+        }
     }
 
     renderUserMessage(text) {

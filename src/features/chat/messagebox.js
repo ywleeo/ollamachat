@@ -4,7 +4,6 @@ import {
     sendMessage,
     addAssistantResponse,
     setResponseState,
-    clearChatHistory,
 } from "../../state/actions.js";
 
 class Messagebox {
@@ -147,6 +146,12 @@ class Messagebox {
 
         // This will be used to update the response in real-time
         const lastMessage = $(".message.ollama:last-child");
+        const chatbox = $("#chatbox");
+        const chatboxElement = chatbox.get(0);
+        
+        // Check if we're at the bottom before updating
+        const wasAtBottom = chatboxElement.scrollHeight - chatboxElement.scrollTop - chatboxElement.clientHeight <= 30;
+        
         if (lastMessage.elements.length > 0) {
             lastMessage.find(".content").text(text);
             lastMessage.find(".stats").text(statsText);
@@ -164,11 +169,13 @@ class Messagebox {
 
             messageDiv.appendChild(contentDiv);
             messageDiv.appendChild(statsDiv);
-            $("#chatbox").appendChild(messageDiv);
+            chatbox.appendChild(messageDiv);
         }
 
-        // Scroll to bottom
-        $("#chatbox").get(0).scrollTop = $("#chatbox").get(0).scrollHeight;
+        // Only scroll if we were already at the bottom
+        if (wasAtBottom) {
+            chatboxElement.scrollTop = chatboxElement.scrollHeight;
+        }
     }
 
     formatStats(stats) {
@@ -188,7 +195,22 @@ class Messagebox {
     }
 
     getText() {
-        return this.element.text();
+        // Get the HTML content including newlines
+        const html = this.element.get(0).innerHTML;
+        
+        // Replace <div><br></div> and <div>text</div> with newlines and text
+        const text = html
+            .replace(/<div><br><\/div>/gi, '\n')
+            .replace(/<div>(.*?)<\/div>/gi, '\n$1')
+            .replace(/<br>/gi, '\n');
+            
+        // Remove any remaining HTML tags
+        const plainText = text
+            .replace(/<[^>]*>/g, '')
+            .replace(/&nbsp;/g, ' ');
+            
+        // Handle the first line which doesn't start with a newline
+        return plainText.startsWith('\n') ? plainText.substring(1) : plainText;
     }
 
     clear() {
