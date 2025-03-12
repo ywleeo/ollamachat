@@ -61,6 +61,44 @@
 /* Messagebox styling */
 #messagebox {
     height: 200px;
+    overflow-y: auto;
+    white-space: pre-wrap;
+    word-wrap: break-word;
+}
+/* Add to public/styles/chat.css */
+
+/* Clear button styles */
+#clear-chat-button {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    z-index: 10;
+    background: rgba(60, 60, 60, 0.8);
+    border: none;
+    cursor: pointer;
+    width: 28px;
+    height: 28px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    transition: all 0.2s ease;
+}
+
+#clear-chat-button:hover {
+    background: rgba(80, 80, 80, 0.9);
+}
+
+#clear-chat-button svg {
+    fill: #ccc;
+    width: 14px;
+    height: 14px;
+}
+
+/* Chat container with relative positioning */
+#chatbox-wrapper {
+    position: relative;
+    width: 100%;
 }
 
 #messagebox.disabled {

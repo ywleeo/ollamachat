@@ -4,6 +4,7 @@ import {
     sendMessage,
     addAssistantResponse,
     setResponseState,
+    clearChatHistory,
 } from "../../state/actions.js";
 
 class Messagebox {
@@ -35,6 +36,18 @@ class Messagebox {
 
         this.element.on("compositionend", () => {
             this.isComposing = false;
+        });
+
+        // Add paste event handler to strip formatting
+        this.element.on("paste", (event) => {
+            // Prevent the default paste
+            event.preventDefault();
+            
+            // Get plain text from clipboard
+            const text = event.clipboardData.getData("text/plain");
+            
+            // Insert text at cursor position
+            document.execCommand("insertText", false, text);
         });
 
         this.element.on("keydown", async (event) => {
@@ -142,12 +155,6 @@ class Messagebox {
             const messageDiv = $.create("div", {
                 attributes: { class: "message ollama" },
             });
-            
-            // Add sender name (new code)
-            const senderSpan = $.create("span", {
-                attributes: { class: "sender" },
-            }).text("Ollama: ");
-            
             const contentDiv = $.create("div", {
                 attributes: { class: "content" },
             }).text(text);
@@ -155,7 +162,6 @@ class Messagebox {
                 attributes: { class: "stats" },
             }).text(statsText);
 
-            messageDiv.appendChild(senderSpan);  // Add this line
             messageDiv.appendChild(contentDiv);
             messageDiv.appendChild(statsDiv);
             $("#chatbox").appendChild(messageDiv);

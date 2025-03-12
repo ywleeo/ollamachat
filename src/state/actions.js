@@ -208,3 +208,22 @@ export function addAssistantResponse(content, statsText = "") {
         isResponding: false,
     });
 }
+
+// Add this function to src/state/actions.js
+
+export function clearChatHistory() {
+    // Reset message history to initial state
+    store.setState({
+        messageHistory: [
+            {
+                role: "user",
+                content: "Hello there!"
+            },
+            {
+                role: "assistant",
+                content: "Hello! How can I assist you today? Feel free to ask any questions or let me know what you'd like to discuss.",
+                stats: "Welcome to Ollama Chat"
+            }
+        ]
+    });
+}
