@@ -58,7 +58,7 @@ div::-webkit-scrollbar {
 }
 
 #left-side {
-    width: 300px;
+    width: 200px;
     flex-shrink: 0;
 }
 

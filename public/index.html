@@ -25,11 +25,20 @@
             </div>
         </div>
         <div id="right-side" class="vstack">
-            <div id="chatbox" class="ol">
-                <div class="message user">Hello there!</div>
-                <div class="message ollama">
-                    <div class="content">Hello! How can I assist you today? Feel free to ask any questions or let me know what you'd like to discuss.</div>
-                    <div class="stats">Welcome to Ollama Chat</div>
+            <div id="chatbox-wrapper">
+                <div id="chatbox" class="ol">
+                    <div class="message user">Hello there!</div>
+                    <div class="message ollama">
+                        <div class="content">Hello! How can I assist you today? Feel free to ask any questions or let me know what you'd like to discuss.</div>
+                        <div class="stats">Welcome to Ollama Chat</div>
+                    </div>
+                </div>
+                <div id="chatbox-controls">
+                    <button id="clear-chat-button" class="icon-button" title="Clear chat history">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                            <path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/>
+                        </svg>
+                    </button>
                 </div>
             </div>
             <div class="messagebox-wrapper">

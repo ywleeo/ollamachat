@@ -43,45 +43,11 @@ class Chatbox {
     }
     
     addClearButton() {
-        // First, ensure the chatbox is wrapped in a container with relative positioning
-        const parent = this.element.get(0).parentNode;
-        
-        // Create wrapper if chatbox isn't already in one
-        if (!parent.classList.contains('chatbox-wrapper')) {
-            const wrapper = $.create("div", {
-                attributes: { 
-                    id: "chatbox-wrapper",
-                    class: "chatbox-wrapper" 
-                }
-            });
-            
-            // Move the chatbox into the wrapper
-            const chatbox = this.element.get(0);
-            parent.replaceChild(wrapper.get(0), chatbox);
-            wrapper.appendChild(chatbox);
-            
-            // Add clear button to the wrapper
-            const clearButton = $.create("button", {
-                attributes: {
-                    id: "clear-chat-button",
-                    title: "Clear chat history"
-                }
-            });
-            
-            // Add trash icon SVG
-            clearButton.get(0).innerHTML = `
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
-                    <path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/>
-                </svg>
-            `;
-            
-            // Add click event
-            clearButton.on("click", () => {
-                clearChatHistory();
-            });
-            
-            wrapper.appendChild(clearButton);
-        }
+        // If wrapper doesn't exist in the DOM, the controls are now part of the HTML
+        const clearButton = $("#clear-chat-button");
+        clearButton.on("click", () => {
+            clearChatHistory();
+        });
     }
 
     saveInitialMessages() {
