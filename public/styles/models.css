@@ -21,6 +21,11 @@
     font-weight: bold;
 }
 
+.model-button.model-selected:hover {
+    background-color: #419730;
+    transition: none;
+}
+
 /* Status indicator */
 .status-indicator {
     display: block;
